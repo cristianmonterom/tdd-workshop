@@ -4,6 +4,7 @@ import com.workshop.tddworkshop.controllers.dto.StudentDTO;
 import com.workshop.tddworkshop.model.Student;
 import com.workshop.tddworkshop.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,10 +17,14 @@ public class BecaEstudianteController {
 
 
     @GetMapping(value ="v1/becas/alumno/{id}")
-    public StudentDTO getStudentInfo(@PathVariable("id") long id){
+    public ResponseEntity<StudentDTO> getStudentInfo(@PathVariable("id") long id){
 
         Student student = studentRepository.findById(id);
-        StudentDTO studentDTO = new StudentDTO(student.getId(), student.getName());
-        return studentDTO;
+        if (student != null) {
+            StudentDTO studentDTO = new StudentDTO(student.getId(), student.getName());
+            return ResponseEntity.ok().body(studentDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
