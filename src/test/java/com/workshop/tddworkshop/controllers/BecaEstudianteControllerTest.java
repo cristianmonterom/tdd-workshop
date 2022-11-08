@@ -46,4 +46,21 @@ public class BecaEstudianteControllerTest {
         Assertions.assertEquals(expectedStudentId, actualResponse.getBody().getId());
     }
 
+    @Test
+    void shouldNotReturnStudentInformationWhenStudentIdDoesNotExists(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        Long expectedStudentId  = 12L;
+        Student expectedStudent = new Student(expectedStudentId, faker.name().firstName());
+        studentRepository.save(expectedStudent);
+
+        ResponseEntity<StudentDTO> actualResponse = this.restTemplate.exchange("/v1/becas/alumno/13", HttpMethod.GET, request, StudentDTO.class);
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, actualResponse.getStatusCode() );
+        Assertions.assertNull(actualResponse.getBody());
+    }
+
 }
