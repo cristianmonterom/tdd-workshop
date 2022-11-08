@@ -17,6 +17,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+	testImplementation ('com.github.javafaker:javafaker:0.14') { exclude module: 'snakeyaml' }
 }
 
 tasks.named('test') {
