@@ -4,7 +4,9 @@ import com.github.javafaker.Faker;
 import com.workshop.tddworkshop.controllers.dto.StudentDTO;
 import com.workshop.tddworkshop.model.Student;
 import com.workshop.tddworkshop.repository.StudentRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -24,21 +26,30 @@ public class BecaEstudianteControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private Faker faker = new Faker();
-
     @Autowired
     private StudentRepository studentRepository;
 
-    @Test
-    void shouldReturnStudentInformationWhenStudentIdIsValid() {
+    private Faker faker = new Faker();
+    private HttpEntity<String> request;
+
+    @BeforeEach
+    void setUp() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        HttpEntity<String> request = new HttpEntity<>(headers);
+        request = new HttpEntity<>(headers);
+    }
 
+
+    @AfterEach
+    void tearDown() {
+        studentRepository.deleteAll();
+    }
+
+    @Test
+    void shouldReturnStudentInformationWhenStudentIdIsValid() {
         Long expectedStudentId  = 12L;
-        Student expectedStudent = new Student(expectedStudentId, faker.name().firstName());
-        studentRepository.save(expectedStudent);
+        createTestStudents(new Student(expectedStudentId, faker.name().firstName()));
 
         ResponseEntity<StudentDTO> actualResponse = this.restTemplate.exchange("/v1/becas/alumno/12", HttpMethod.GET, request, StudentDTO.class);
 
@@ -48,14 +59,8 @@ public class BecaEstudianteControllerTest {
 
     @Test
     void shouldNotReturnStudentInformationWhenStudentIdDoesNotExists(){
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        HttpEntity<String> request = new HttpEntity<>(headers);
-
         Long expectedStudentId  = 12L;
-        Student expectedStudent = new Student(expectedStudentId, faker.name().firstName());
-        studentRepository.save(expectedStudent);
+        createTestStudents(new Student(expectedStudentId, faker.name().firstName()));
 
         ResponseEntity<StudentDTO> actualResponse = this.restTemplate.exchange("/v1/becas/alumno/13", HttpMethod.GET, request, StudentDTO.class);
 
@@ -63,4 +68,7 @@ public class BecaEstudianteControllerTest {
         Assertions.assertNull(actualResponse.getBody());
     }
 
+    private void createTestStudents(Student expectedStudent) {
+        studentRepository.save(expectedStudent);
+    }
 }

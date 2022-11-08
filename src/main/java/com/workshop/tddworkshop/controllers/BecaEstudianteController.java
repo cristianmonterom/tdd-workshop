@@ -23,8 +23,8 @@ public class BecaEstudianteController {
         if (student != null) {
             StudentDTO studentDTO = new StudentDTO(student.getId(), student.getName());
             return ResponseEntity.ok().body(studentDTO);
-        } else {
-            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.notFound().build();
+
     }
 }
