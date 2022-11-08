@@ -37,7 +37,5 @@ public class BecaEstudianteControllerTest {
 
         Assertions.assertEquals(HttpStatus.OK, actualResponse.getStatusCode() );
         Assertions.assertEquals("Fernanda", actualResponse.getBody());
-        // TODO: recibir parametro de codigo de estudiante
-        // TODO: Recibir objeto de tipo estudiante
     }
 }
