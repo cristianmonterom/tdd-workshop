@@ -36,14 +36,14 @@ public class BecaEstudianteControllerTest {
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        Long expectedStudentId  = 12L;
-        Student expectedStudent = new Student(expectedStudentId, faker.name().firstName());
+        Student expectedStudent = new Student(12L, faker.name().firstName());
         studentRepository.save(expectedStudent);
 
         ResponseEntity<StudentDTO> actualResponse = this.restTemplate.exchange("/v1/becas/alumno/12", HttpMethod.GET, request, StudentDTO.class);
 
         Assertions.assertEquals(HttpStatus.OK, actualResponse.getStatusCode() );
-        Assertions.assertEquals(expectedStudentId, actualResponse.getBody().getId());
+        Assertions.assertEquals(expectedStudent.getId(), actualResponse.getBody().getId());
+        Assertions.assertEquals(expectedStudent.getName(), actualResponse.getBody().getName());
     }
 
     @Test
