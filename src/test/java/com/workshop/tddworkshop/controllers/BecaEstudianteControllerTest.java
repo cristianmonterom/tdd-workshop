@@ -48,19 +48,19 @@ public class BecaEstudianteControllerTest {
 
     @Test
     void shouldReturnStudentInformationWhenStudentIdIsValid() {
-        Long expectedStudentId  = 12L;
-        createTestStudents(new Student(expectedStudentId, faker.name().firstName()));
+        Student expectedStudent = new Student(12L, faker.name().firstName());
+        studentRepository.save(expectedStudent);
 
         ResponseEntity<StudentDTO> actualResponse = this.restTemplate.exchange("/v1/becas/alumno/12", HttpMethod.GET, request, StudentDTO.class);
 
-        Assertions.assertEquals(HttpStatus.OK, actualResponse.getStatusCode() );
-        Assertions.assertEquals(expectedStudentId, actualResponse.getBody().getId());
+        Assertions.assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
+        Assertions.assertEquals(expectedStudent.getId(), actualResponse.getBody().getId());
+        Assertions.assertEquals(expectedStudent.getName(), actualResponse.getBody().getName());
     }
 
     @Test
     void shouldNotReturnStudentInformationWhenStudentIdDoesNotExists(){
-        Long expectedStudentId  = 12L;
-        createTestStudents(new Student(expectedStudentId, faker.name().firstName()));
+        studentRepository.save(new Student(12L, faker.name().firstName()));
 
         ResponseEntity<StudentDTO> actualResponse = this.restTemplate.exchange("/v1/becas/alumno/13", HttpMethod.GET, request, StudentDTO.class);
 
@@ -68,7 +68,4 @@ public class BecaEstudianteControllerTest {
         Assertions.assertNull(actualResponse.getBody());
     }
 
-    private void createTestStudents(Student expectedStudent) {
-        studentRepository.save(expectedStudent);
-    }
 }
